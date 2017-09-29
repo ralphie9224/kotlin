@@ -15,6 +15,16 @@ dependencies {
     testCompile project(':kotlin-allopen')
     testCompile project(':kotlin-test:kotlin-test-jvm')
 
+    // todo: can be removed after IDE can resolve common API
+    // IDE only dependency
+    testCompile(project(':kotlin-test:kotlin-test-common')) {
+        // if a dependency kotlin-test-common is not transitive,
+        // a dependency on kotlin-stdlib-common will be added.
+        // kotlin-stdlib-common declarations will conflict with kotlin-stdlib-jre8
+        // in IDE
+        transitive = false
+    }
+
     testCompile project(path: ':kotlin-compiler-embeddable', configuration: 'runtimeJar')
     testCompile project(path: ':examples:annotation-processor-example')
     testCompile project(':kotlin-stdlib-jre8')
@@ -32,6 +42,7 @@ test.dependsOn(":kotlin-allopen:install",
                ":kotlin-compiler-embeddable:install",
                ":kotlin-gradle-plugin:install",
                ":kotlin-reflect:install",
+               ":kotlin-test:kotlin-test-common:install",
                ":kotlin-test:kotlin-test-jvm:install",
                ":kotlin-gradle-subplugin-example:install",
                ":kotlin-stdlib-jre8:install")
