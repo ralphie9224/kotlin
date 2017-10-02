@@ -66,7 +66,8 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
 
         commonProject.whenEvaluated {
             if ((!commonProject.plugins.hasPlugin(KotlinPlatformCommonPlugin::class.java))) {
-                throw GradleException("Platform project $platformProject implements non-common project $commonProject (`apply plugin 'kotlin-platform-kotlin'`)")
+                throw GradleException("Platform project $platformProject implements " +
+                                      "non-common project $commonProject (`apply plugin 'kotlin-platform-common'`)")
             }
 
             commonProject.sourceSets.all { commonSourceSet ->
