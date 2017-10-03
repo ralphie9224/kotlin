@@ -81,7 +81,8 @@ sealed class CreateActualFix<out D : KtNamedDeclaration>(
             }
             val actualDeclaration = actualFile.add(generated) as KtElement
             val reformatted = CodeStyleManager.getInstance(project).reformat(actualDeclaration)
-            ShortenReferences.DEFAULT.process(reformatted as KtElement)
+            val shortened = ShortenReferences.DEFAULT.process(reformatted as KtElement)
+            editor?.caretModel?.moveToOffset(shortened.textRange.startOffset)
         }
     }
 
