@@ -76,6 +76,13 @@ val Module.externalProjectId: String?
 val Module.externalProjectPath: String?
     get() = ExternalSystemApiUtil.getExternalProjectPath(this)
 
+fun ModuleSourceRootGroup.allModules(): Set<Module> {
+    val result = LinkedHashSet<Module>()
+    result.add(baseModule)
+    result.addAll(sourceRootModules)
+    return result
+}
+
 fun List<ModuleSourceRootGroup>.exclude(excludeModules: Collection<Module>): List<ModuleSourceRootGroup> {
     return mapNotNull {
         if (it.baseModule in excludeModules)
