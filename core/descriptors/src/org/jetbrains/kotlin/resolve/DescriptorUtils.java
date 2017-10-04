@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -460,7 +460,8 @@ public class DescriptorUtils {
     public static boolean classCanHaveAbstractMembers(@NotNull ClassDescriptor classDescriptor) {
         return classDescriptor.getModality() == Modality.ABSTRACT
                || isSealedClass(classDescriptor)
-               || classDescriptor.getKind() == ClassKind.ENUM_CLASS;
+               || classDescriptor.getKind() == ClassKind.ENUM_CLASS
+               || classDescriptor.isExpect();
     }
 
     public static boolean classCanHaveOpenMembers(@NotNull ClassDescriptor classDescriptor) {
