@@ -14,18 +14,23 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.optimization
+package org.jetbrains.kotlin.config
 
-import org.jetbrains.kotlin.codegen.coroutines.UninitializedStoresProcessor
-import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
+enum class JVMConstructorCallNormalizationMode(
+        val description: String,
+        val isEnabled: Boolean,
+        val shouldForceClassInit: Boolean
+) {
+    NONE("none", false, false),
+    NO_CLASS_INITIALIZATION("no-class-init", true, false),
+    FULL("full", true, true)
+    ;
 
-class UninitializedStoresMethodTransformer(
-        private val shouldForceClassInit: Boolean
-) : MethodTransformer() {
+    companion object {
+        @JvmField
+        val DEFAULT = FULL
 
-    override fun transform(internalClassName: String, methodNode: MethodNode) {
-        UninitializedStoresProcessor(methodNode, shouldForceClassInit).run()
+        @JvmStatic
+        fun fromString(string: String?) = values().find { it.description == string } ?: DEFAULT
     }
-
 }
