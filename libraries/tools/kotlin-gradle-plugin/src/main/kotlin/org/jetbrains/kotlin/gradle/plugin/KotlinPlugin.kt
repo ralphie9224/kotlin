@@ -602,9 +602,6 @@ internal fun configureJavaTask(kotlinTask: KotlinCompile, javaTask: AbstractComp
 
     // Make Gradle check if the javaTask is up-to-date based on the Kotlin classes
     javaTask.inputs.dir(kotlinTask.destinationDir)
-    // Also, use kapt1 annotations file for up-to-date check since annotation processing is done with javac
-    kotlinTask.kaptOptions.annotationsFile?.let { javaTask.inputs.file(it) }
-
     javaTask.dependsOn(kotlinTask)
     /*
      * It's important to modify javaTask.classpath only in doFirst,
