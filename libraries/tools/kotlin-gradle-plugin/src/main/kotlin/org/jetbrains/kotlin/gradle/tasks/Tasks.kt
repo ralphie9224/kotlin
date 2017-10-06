@@ -266,7 +266,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
     override fun setupPlugins(compilerArgs: K2JVMCompilerArguments) {
         compilerArgs.pluginClasspaths = pluginOptions.classpath.toTypedArray()
-        compilerArgs.pluginOptions = (pluginOptions.arguments + kaptPluginOptions.arguments).toTypedArray()
+        compilerArgs.pluginOptions = pluginOptions.arguments.toTypedArray()
     }
 
     override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean) {
