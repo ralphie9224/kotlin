@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.gradle.internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
-import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.tasks.FilteringSourceRootsContainer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.classpathAsList
 import org.jetbrains.kotlin.incremental.destinationAsFile
@@ -46,13 +46,10 @@ open class KaptGenerateStubsTask : KotlinCompile() {
         super.setSource(sourceRootsContainer.set(sources))
     }
 
-    private fun isSourceRootAllowed(source: File): Boolean {
-        fun File.isInside(parent: File) = FileUtil.isAncestor(parent, this, /* strict = */ false)
-
-        return !source.isInside(destinationDir) &&
-               !source.isInside(stubsDir) &&
-               !source.isInside(generatedSourcesDir)
-    }
+    private fun isSourceRootAllowed(source: File): Boolean =
+            !destinationDir.isParentOf(source, strict = false) &&
+            !stubsDir.isParentOf(source, strict = false) &&
+            !generatedSourcesDir.isParentOf(source, strict = false)
 
     override fun execute(inputs: IncrementalTaskInputs) {
         val sourceRoots = kotlinCompileTask.getSourceRoots()

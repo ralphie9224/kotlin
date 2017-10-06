@@ -7,11 +7,11 @@ import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.utils.isParentOf
 import java.io.File
 
 open class KaptTask : ConventionTask() {
@@ -20,10 +20,8 @@ open class KaptTask : ConventionTask() {
     internal lateinit var kotlinCompileTask: KotlinCompile
     internal lateinit var stubsDir: File
 
-    private fun isInsideDestinationDirs(file: File): Boolean {
-        return FileUtil.isAncestor(destinationDir, file, /* strict = */ false)
-                || FileUtil.isAncestor(classesDir, file, /* strict = */ false)
-    }
+    private fun isInsideDestinationDirs(file: File): Boolean =
+            destinationDir.isParentOf(file, strict = false) || classesDir.isParentOf(file, strict = false)
 
     @OutputDirectory
     internal lateinit var classesDir: File

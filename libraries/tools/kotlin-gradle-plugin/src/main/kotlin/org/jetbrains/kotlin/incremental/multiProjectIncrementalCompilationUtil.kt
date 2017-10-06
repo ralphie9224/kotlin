@@ -21,9 +21,9 @@ import org.gradle.api.Task
 import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
-import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProvider
 import java.io.File
 
@@ -51,9 +51,9 @@ internal fun configureMultiProjectIncrementalCompilation(
 
     fun isUnknownTaskOutputtingToJavaDestination(task: Task): Boolean {
         return task !is JavaCompile &&
-                task !is KotlinCompile &&
-                task is AbstractCompile &&
-                FileUtil.isAncestor(javaTask.destinationDir, task.destinationDir, /* strict = */ false)
+               task !is KotlinCompile &&
+               task is AbstractCompile &&
+               javaTask.destinationDir.isParentOf(task.destinationDir, strict = false)
     }
 
     if (!kotlinTask.incremental) {
