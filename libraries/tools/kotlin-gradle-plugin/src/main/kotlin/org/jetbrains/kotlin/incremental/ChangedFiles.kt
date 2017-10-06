@@ -20,6 +20,11 @@ import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import java.io.File
 import java.util.*
 
+internal sealed class ChangedFiles {
+    class Known(val modified: List<File>, val removed: List<File>) : ChangedFiles()
+    class Unknown : ChangedFiles()
+}
+
 internal fun ChangedFiles(taskInputs: IncrementalTaskInputs): ChangedFiles {
     if (!taskInputs.isIncremental) return ChangedFiles.Unknown()
 
