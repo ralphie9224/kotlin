@@ -49,7 +49,6 @@ import java.io.File
 import java.util.*
 import kotlin.properties.Delegates
 
-const val ANNOTATIONS_PLUGIN_NAME = "org.jetbrains.kotlin.kapt"
 const val KOTLIN_BUILD_DIR_NAME = "kotlin"
 const val USING_INCREMENTAL_COMPILATION_MESSAGE = "Using Kotlin incremental compilation"
 const val USING_EXPERIMENTAL_JS_INCREMENTAL_COMPILATION_MESSAGE = "Using experimental Kotlin/JS incremental compilation"
@@ -242,10 +241,8 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             get() = kotlinOptionsImpl
     internal open val sourceRootsContainer = FilteringSourceRootsContainer()
 
-    private var kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null
     val buildHistoryFile: File = File(taskBuildDirectory, "build-history.bin")
 
-    val kaptOptions = KaptOptions()
 
     /** A package prefix that is used for locating Java sources in a directory structure with non-full-depth packages.
      *
@@ -319,7 +316,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
                 logger.warn(USING_INCREMENTAL_COMPILATION_MESSAGE)
                 val friendTask = friendTaskName?.let { project.tasks.findByName(it) as? KotlinCompile }
                 GradleIncrementalCompilerEnvironment(computedCompilerClasspath, changedFiles, reporter, taskBuildDirectory,
-                        messageCollector, outputItemCollector, args, kaptAnnotationsFileUpdater,
+                        messageCollector, outputItemCollector, args,
                         artifactDifferenceRegistryProvider,
                         artifactFile = artifactFile,
                         buildHistoryFile = buildHistoryFile,
@@ -369,25 +366,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
         throwGradleExceptionIfError(exitCode)
     }
-
-    private fun getKaptPluginOptions() =
-            CompilerPluginOptions().apply {
-                kaptOptions.annotationsFile?.let { kaptAnnotationsFile ->
-                    if (incremental) {
-                        kaptAnnotationsFileUpdater = AnnotationFileUpdaterImpl(kaptAnnotationsFile)
-                    }
-
-                    addPluginArgument(ANNOTATIONS_PLUGIN_NAME, "output", kaptAnnotationsFile.canonicalPath)
-                }
-
-                if (kaptOptions.generateStubs) {
-                    addPluginArgument(ANNOTATIONS_PLUGIN_NAME, "stubs", destinationDir.canonicalPath)
-                }
-
-                if (kaptOptions.supportInheritedAnnotations) {
-                    addPluginArgument(ANNOTATIONS_PLUGIN_NAME, "inherited", true.toString())
-                }
-            }
 
     // override setSource to track source directory sets and files (for generated android folders)
     override fun setSource(sources: Any?) {

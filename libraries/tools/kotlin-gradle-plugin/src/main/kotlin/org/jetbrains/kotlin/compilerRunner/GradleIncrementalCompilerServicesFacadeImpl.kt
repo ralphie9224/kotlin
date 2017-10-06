@@ -56,16 +56,10 @@ internal class GradleIncrementalCompilerServicesFacadeImpl(
 ) : GradleCompilerServicesFacadeImpl(project, environment.messageCollector, port),
     IncrementalCompilerServicesFacade {
 
-    override fun hasAnnotationsFileUpdater(): Boolean =
-            environment.kaptAnnotationsFileUpdater != null
-
+    override fun hasAnnotationsFileUpdater(): Boolean = false
     override fun updateAnnotations(outdatedClassesJvmNames: Iterable<String>) {
-        val jvmNames = outdatedClassesJvmNames.map { JvmClassName.byInternalName(it) }
-        environment.kaptAnnotationsFileUpdater!!.updateAnnotations(jvmNames)
     }
-
     override fun revert() {
-        environment.kaptAnnotationsFileUpdater!!.revert()
     }
 
     override fun getChanges(artifact: File, sinceTS: Long): Iterable<SimpleDirtyData>? {

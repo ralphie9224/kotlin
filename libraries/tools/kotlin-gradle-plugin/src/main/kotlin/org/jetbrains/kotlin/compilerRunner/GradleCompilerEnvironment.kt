@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.compilerRunner
 
-import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.gradle.tasks.GradleMessageCollector
@@ -34,7 +33,6 @@ internal class GradleIncrementalCompilerEnvironment(
         messageCollector: GradleMessageCollector,
         outputItemsCollector: OutputItemsCollector,
         compilerArgs: CommonCompilerArguments,
-        val kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null,
         val artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider? = null,
         val artifactFile: File? = null,
         val buildHistoryFile: File? = null,

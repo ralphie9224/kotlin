@@ -31,7 +31,6 @@ internal fun configureMultiProjectIncrementalCompilation(
         project: Project,
         kotlinTask: KotlinCompile,
         javaTask: AbstractCompile,
-        kotlinAfterJavaTask: KotlinCompile?,
         artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider,
         artifactFile: File?
 ) {
@@ -66,7 +65,6 @@ internal fun configureMultiProjectIncrementalCompilation(
         return cannotPerformMultiProjectIC(reason = "unknown task outputs to java destination dir ${illegalTask.path} $(${illegalTask.javaClass})")
     }
 
-    val kotlinCompile = kotlinAfterJavaTask ?: kotlinTask
-    kotlinCompile.artifactDifferenceRegistryProvider = artifactDifferenceRegistryProvider
-    kotlinCompile.artifactFile = artifactFile
+    kotlinTask.artifactDifferenceRegistryProvider = artifactDifferenceRegistryProvider
+    kotlinTask.artifactFile = artifactFile
 }
