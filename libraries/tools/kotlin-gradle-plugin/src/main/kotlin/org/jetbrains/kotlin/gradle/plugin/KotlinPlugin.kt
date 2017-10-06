@@ -23,7 +23,6 @@ import org.gradle.api.tasks.SourceSetOutput
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import com.intellij.util.ReflectionUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedClassesDir
@@ -257,12 +256,8 @@ internal class Kotlin2JvmSourceSetProcessor(
 internal fun SourceSetOutput.tryAddClassesDir(
         classesDirProvider: () -> FileCollection
 ): Boolean {
-    val getClassesDirs = ReflectionUtil.findMethod(
-            javaClass.methods.asList(),
-            "getClassesDirs"
-    ) ?: return false
-
-    val classesDirs = getClassesDirs(this) as? ConfigurableFileCollection
+    val getClassesDirs = javaClass.methods.find { it.name == "getClassesDirs" && it.parameterCount == 0 }
+    val classesDirs = getClassesDirs?.invoke(this) as? ConfigurableFileCollection
             ?: return false
 
     classesDirs.from(Callable { classesDirProvider() })
