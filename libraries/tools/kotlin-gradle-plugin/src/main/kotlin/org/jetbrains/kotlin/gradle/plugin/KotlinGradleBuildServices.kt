@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.incremental.BuildCacheStorage
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProvider
 import org.jetbrains.kotlin.incremental.relativeToRoot
 import org.jetbrains.kotlin.incremental.stackTraceStr
-import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
 import java.io.File
 import java.lang.management.ManagementFactory
 
@@ -157,5 +156,5 @@ internal class KotlinGradleBuildServices private constructor(gradle: Gradle): Bu
     }
 
     private fun getGcCount(): Long =
-            ManagementFactory.getGarbageCollectorMXBeans().sumByLong { Math.max(0, it.collectionCount) }
+            ManagementFactory.getGarbageCollectorMXBeans().fold(0L) { acc, bean -> acc + Math.max(0, bean.collectionCount) }
 }
