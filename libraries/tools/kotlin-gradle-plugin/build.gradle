@@ -57,6 +57,44 @@ dependencies {
     testCompile "junit:junit:4.12"
 }
 
+task installAll
+
+installAll.dependsOn(
+        ":kotlin-android-extensions:install",
+        ":kotlin-annotation-processing-gradle:install",
+        ":kotlin-build-common:install",
+        ":kotlin-compiler-client-embeddable:install",
+        ":kotlin-compiler-embeddable:install",
+        ":kotlin-compiler-runner:install",
+        ":kotlin-gradle-plugin-api:install",
+        ":kotlin-gradle-plugin:install",
+        ":kotlin-stdlib:install"
+)
+
+// Validate that all dependencies 'install' tasks are added to 'test' dependencies
+// Test dependencies are specified as paths to avoid forcing dependency resolution
+// and also to avoid specifying evaluationDependsOn for each testCompile dependency.
+gradle.taskGraph.whenReady {
+    def notAddedTestTasks = []
+    def installAllDependencies = installAll.dependsOn
+    def runtimeConfigurations = ["runtime", "runtimeOnly"].collect { configurations.getByName(it) }
+
+    for (configuration in runtimeConfigurations) {
+        for (dependency in configuration.allDependencies) {
+            if (!(dependency instanceof ProjectDependency)) continue
+
+            def task = dependency.dependencyProject.tasks.findByName("install")
+            if (task != null && !installAllDependencies.contains(task.path)) {
+                notAddedTestTasks.add("\"${task.path}\"")
+            }
+        }
+    }
+
+    if (!notAddedTestTasks.isEmpty()) {
+        throw new GradleException("Add the following tasks to ${test.path} dependencies:\n  ${notAddedTestTasks.join(",\n  ")}")
+    }
+}
+
 tasks.withType(project.compileKotlin.class) {
     kotlinOptions.jdkHome = JDK_18
 }
