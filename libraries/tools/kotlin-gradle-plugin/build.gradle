@@ -39,7 +39,7 @@ dependencies {
     compileOnly(project(':compiler:cli-common')) { transitive = false }
     compileOnly(project(':compiler:daemon-common')) { transitive = false }
     compileOnly(project(':kotlin-daemon-client')) { transitive = false }
-    runtimeOnly project(path: ':kotlin-compiler-client-embeddable', configuration: "runtimeJar")
+    runtime project(path: ':kotlin-compiler-client-embeddable', configuration: "runtimeJar")
 
 //    compileOnly project(":compiler:daemon")
     compile project(path: ':kotlin-annotation-processing-gradle', configuration: "runtimeJar")
