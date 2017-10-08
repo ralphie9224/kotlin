@@ -62,9 +62,6 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
             kotlinClasspath + project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
         }
 
-        // Use kapt1 annotations file for up-to-date check since annotation processing is done with javac
-        kotlinTask.kaptOptions.annotationsFile?.let { javaTask.inputs.file(it) }
-
         // Find the classpath entries that comes from the tested variant and register it as the friend path, lazily
         kotlinTask.friendPaths = lazy {
             variantData.getCompileClasspathArtifacts(preJavaClasspathKey)
