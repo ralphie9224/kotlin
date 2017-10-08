@@ -24,7 +24,9 @@ val testStdlibJar by configurations.creating
 val testScriptRuntimeJar by configurations.creating
 val archives by configurations
 
+// when changing these dependencies, also change dependencies in :kotlin-gradle-plugin
 val projectsToInclude = listOf(
+        ":core:util.runtime",
         ":compiler:cli-common",
         ":compiler:daemon-common",
         ":kotlin-daemon-client")

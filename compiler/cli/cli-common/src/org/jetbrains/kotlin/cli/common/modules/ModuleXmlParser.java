@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.cli.common.modules;
 
 import com.intellij.openapi.util.io.StreamUtil;
-import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
@@ -25,6 +24,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil;
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil;
 import org.jetbrains.kotlin.modules.JavaRootPath;
 import org.jetbrains.kotlin.modules.Module;
+import org.jetbrains.kotlin.utils.SmartList;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;

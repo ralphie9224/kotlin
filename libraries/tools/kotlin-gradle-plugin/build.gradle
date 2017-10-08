@@ -35,6 +35,7 @@ dependencies {
     compile project(':kotlin-build-common')
     compile project(':kotlin-compiler-runner')
 
+    compileOnly(project(':core:util.runtime')) { transitive = false }
     compileOnly(project(':compiler:cli-common')) { transitive = false }
     compileOnly(project(':compiler:daemon-common')) { transitive = false }
     compileOnly(project(':kotlin-daemon-client')) { transitive = false }
