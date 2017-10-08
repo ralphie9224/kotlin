@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
-import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.gradle.plugin.ParentLastURLClassLoader
@@ -47,6 +46,7 @@ const val CREATED_SESSION_FILE_PREFIX = "Created session-is-alive flag file: "
 const val EXISTING_SESSION_FILE_PREFIX = "Existing session-is-alive flag file: "
 const val DELETED_SESSION_FILE_PREFIX = "Deleted session-is-alive flag file: "
 const val COULD_NOT_CONNECT_TO_DAEMON_MESSAGE = "Could not connect to Kotlin compile daemon"
+private const val SERVICES_FQ_NAME = "org.jetbrains.kotlin.config.Services"
 
 internal class GradleCompilerRunner(private val project: Project) : KotlinCompilerRunner<GradleCompilerEnvironment>() {
     override val log = GradleKotlinLogger(project.logger)
@@ -296,7 +296,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
         val out = PrintStream(stream)
         // todo: cache classloader?
         val classLoader = ParentLastURLClassLoader(environment.compilerClasspathURLs, this.javaClass.classLoader)
-        val servicesClass = Class.forName(Services::class.java.canonicalName, true, classLoader)
+        val servicesClass = Class.forName(SERVICES_FQ_NAME, true, classLoader)
         val emptyServices = servicesClass.getField("EMPTY").get(servicesClass)
         val compiler = Class.forName(compilerClassName, true, classLoader)
 
