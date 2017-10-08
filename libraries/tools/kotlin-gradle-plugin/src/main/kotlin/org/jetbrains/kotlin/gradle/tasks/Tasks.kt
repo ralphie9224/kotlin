@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistry
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProvider
-import org.jetbrains.kotlin.utils.LibraryUtils
 import java.io.File
 import java.util.*
 import kotlin.properties.Delegates
@@ -413,20 +412,12 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
                 ?.let { project.getTasksByName(it, false).singleOrNull() as? Kotlin2JsCompile }
                 ?.outputFile
                 ?.let { File(it).parentFile }
-                ?.let { if (LibraryUtils.isKotlinJavascriptLibrary(it)) it else null }
-                ?.absolutePath
 
-        val dependencies = compileClasspath
-                .filter { LibraryUtils.isKotlinJavascriptLibrary(it) }
-                .map { it.canonicalPath }
+        args.libraries = (compileClasspath + listOfNotNull(friendDependency))
+                .takeUnless { it.isEmpty() }
+                ?.joinToString(File.pathSeparator) { it.canonicalPath }
 
-        args.libraries = (dependencies + listOfNotNull(friendDependency)).let {
-            if (it.isNotEmpty())
-                it.joinToString(File.pathSeparator) else
-                null
-        }
-
-        args.friendModules = friendDependency
+        args.friendModules = friendDependency?.canonicalPath
 
         args.sourceMapSourceRoots = source.orEmpty()
                 .asSequence()

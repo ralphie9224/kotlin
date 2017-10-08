@@ -64,10 +64,7 @@ import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
-import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
-import org.jetbrains.kotlin.utils.KotlinPaths;
-import org.jetbrains.kotlin.utils.PathUtil;
-import org.jetbrains.kotlin.utils.StringsKt;
+import org.jetbrains.kotlin.utils.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -442,7 +439,12 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         }
 
         if (arguments.getLibraries() != null) {
-            libraries.addAll(ArraysKt.filterNot(arguments.getLibraries().split(File.pathSeparator), String::isEmpty));
+            String[] libsPaths = arguments.getLibraries().split(File.pathSeparator);
+            for (String libPath : libsPaths) {
+                if (!libPath.isEmpty() && LibraryUtils.isKotlinJavascriptLibrary(new File(libPath))) {
+                    libraries.add(libPath);
+                }
+            }
         }
         return libraries;
     }
