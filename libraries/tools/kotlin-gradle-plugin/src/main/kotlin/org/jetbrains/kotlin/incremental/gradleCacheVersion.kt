@@ -23,3 +23,11 @@ internal const val GRADLE_CACHE_VERSION_FILE_NAME = "gradle-format-version.txt"
 
 internal fun gradleCacheVersion(dataRoot: File, enabled: Boolean): CacheVersion =
         customCacheVersion(GRADLE_CACHE_VERSION, GRADLE_CACHE_VERSION_FILE_NAME, dataRoot, enabled)
+
+private fun customCacheVersion(version: Int, fileName: String, dataRoot: File, enabled: Boolean): CacheVersion =
+        CacheVersion(ownVersion = version,
+                     versionFile = File(dataRoot, fileName),
+                     whenVersionChanged = CacheVersion.Action.REBUILD_ALL_KOTLIN,
+                     whenTurnedOn = CacheVersion.Action.REBUILD_ALL_KOTLIN,
+                     whenTurnedOff = CacheVersion.Action.REBUILD_ALL_KOTLIN,
+                     isEnabled = { enabled })
