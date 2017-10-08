@@ -146,6 +146,7 @@ internal class Kotlin2JvmSourceSetProcessor(
             tasksProvider.createKotlinJVMTask(project, taskName, sourceSet.name)
 
     override fun doTargetSpecificProcessing() {
+        project.createAptConfiguration(sourceSet.name, kotlinPluginVersion)
         kotlinSourceSet.kotlin.source(sourceSet.java)
 
         project.afterEvaluate { project ->
