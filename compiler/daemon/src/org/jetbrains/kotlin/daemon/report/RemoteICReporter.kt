@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.incremental.ICReporter
 import java.io.File
-import java.io.Serializable
 
 internal class RemoteICReporter(
         private val servicesFacade: CompilerServicesFacadeBase,
@@ -41,16 +40,5 @@ internal class RemoteICReporter(
         if (shouldReportCompileIteration) {
             compilationResults.add(CompilationResultCategory.IC_COMPILE_ITERATION.code, CompileIterationResult(sourceFiles, exitCode.toString()))
         }
-    }
-}
-
-class CompileIterationResult(
-        @Suppress("unused") // used in Gradle
-        val sourceFiles: Iterable<File>,
-        @Suppress("unused") // used in Gradle
-        val exitCode: String
-) : Serializable {
-    companion object {
-        const val serialVersionUID: Long = 0
     }
 }

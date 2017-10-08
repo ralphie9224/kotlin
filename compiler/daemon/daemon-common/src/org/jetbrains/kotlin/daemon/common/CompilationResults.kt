@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.daemon.common
 
+import java.io.File
 import java.io.Serializable
 import java.rmi.Remote
 import java.rmi.RemoteException
@@ -27,4 +28,13 @@ interface CompilationResults : Remote {
 
 enum class CompilationResultCategory(val code: Int) {
     IC_COMPILE_ITERATION(0)
+}
+
+class CompileIterationResult(
+        val sourceFiles: Iterable<File>,
+        val exitCode: String
+) : Serializable {
+    companion object {
+        const val serialVersionUID: Long = 0
+    }
 }
