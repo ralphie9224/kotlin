@@ -45,6 +45,7 @@ open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJs
         keep += fqn
     }
 
+    @Suppress("unused")
     @TaskAction
     fun performDce() {
         val inputFiles = getSource().files.map { it.path }
