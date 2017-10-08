@@ -17,55 +17,26 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.daemon.client.DaemonReportMessage
 import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.launchProcessWithFallback
 import org.jetbrains.kotlin.daemon.common.DaemonReportCategory
-import org.jetbrains.org.objectweb.asm.ClassReader
-import org.jetbrains.org.objectweb.asm.ClassVisitor
-import org.jetbrains.org.objectweb.asm.FieldVisitor
-import org.jetbrains.org.objectweb.asm.Opcodes
 import java.io.File
-import java.util.zip.ZipFile
+import java.net.URLClassLoader
 import kotlin.concurrent.thread
 
-internal fun loadCompilerVersion(compilerClasspath: List<File>): String {
-    var result: String? = null
+private const val KOTLIN_COMPILER_VERSION_FQ_NAME = "org.jetbrains.kotlin.config.KotlinCompilerVersion"
 
-    fun checkVersion(bytes: ByteArray) {
-        ClassReader(bytes).accept(object : ClassVisitor(Opcodes.ASM5) {
-            override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor {
-                if (name == KotlinCompilerVersion::VERSION.name && value is String) {
-                    result = value
-                }
-                return super.visitField(access, name, desc, signature, value)
-            }
-        }, ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES or ClassReader.SKIP_DEBUG)
+internal fun loadCompilerVersion(env: GradleCompilerEnvironment): String {
+    val result: String? = try {
+        val classloader = URLClassLoader(env.compilerClasspathURLs.toTypedArray())
+        val compilerVersionClass = Class.forName(KOTLIN_COMPILER_VERSION_FQ_NAME, false, classloader)
+        val versionField = compilerVersionClass.fields.find { it.name == "VERSION" }
+        versionField?.get(compilerVersionClass).toString()
     }
-
-    try {
-        val versionClassFileName = KotlinCompilerVersion::class.java.name.replace('.', '/') + ".class"
-        for (cpFile in compilerClasspath) {
-            if (cpFile.isFile && cpFile.extension.toLowerCase() == "jar") {
-                ZipFile(cpFile).use { jar ->
-                    val bytes = jar.getInputStream(jar.getEntry(versionClassFileName)).use { it.readBytes() }
-                    checkVersion(bytes)
-                }
-            }
-            else if (cpFile.isDirectory) {
-                File(cpFile, versionClassFileName).takeIf { it.isFile }?.let {
-                    checkVersion(it.readBytes())
-                }
-            }
-            if (result != null) break
-        }
+    catch (e: Throwable) {
+        null
     }
-    catch (e: Throwable) {}
 
     return result ?: "<unknown>"
 }
