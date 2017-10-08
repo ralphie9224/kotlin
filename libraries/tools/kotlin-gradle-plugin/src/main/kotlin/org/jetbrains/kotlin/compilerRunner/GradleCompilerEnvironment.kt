@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.gradle.tasks.GradleMessageCollector
 import org.jetbrains.kotlin.gradle.tasks.findToolsJar
 import org.jetbrains.kotlin.incremental.ChangedFiles
@@ -15,7 +14,7 @@ internal open class GradleCompilerEnvironment(
         messageCollector: GradleMessageCollector,
         outputItemsCollector: OutputItemsCollector,
         val compilerArgs: CommonCompilerArguments
-) : CompilerEnvironment(Services.EMPTY, messageCollector, outputItemsCollector) {
+) : CompilerEnvironment(messageCollector, outputItemsCollector) {
     val toolsJar: File? by lazy { findToolsJar() }
 
     val compilerFullClasspath: List<File>

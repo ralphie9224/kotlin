@@ -23,11 +23,11 @@ import org.jetbrains.kotlin.utils.KotlinPaths
 
 class JpsCompilerEnvironment(
         val kotlinPaths: KotlinPaths,
-        services: Services,
+        val services: Services,
         val classesToLoadByParent: ClassCondition,
         messageCollector: MessageCollector,
         outputItemsCollector: OutputItemsCollectorImpl
-) : CompilerEnvironment(services, messageCollector, outputItemsCollector) {
+) : CompilerEnvironment(messageCollector, outputItemsCollector) {
     override val outputItemsCollector: OutputItemsCollectorImpl
         get() = super.outputItemsCollector as OutputItemsCollectorImpl
 }
