@@ -34,7 +34,11 @@ dependencies {
     compile project(':kotlin-android-extensions')
     compile project(':kotlin-build-common')
     compile project(':kotlin-compiler-runner')
-    compile project(path: ':kotlin-compiler-client-embeddable', configuration: "runtimeJar")
+
+    compileOnly(project(':compiler:cli-common')) { transitive = false }
+    compileOnly(project(':compiler:daemon-common')) { transitive = false }
+    compileOnly(project(':kotlin-daemon-client')) { transitive = false }
+    runtimeOnly project(path: ':kotlin-compiler-client-embeddable', configuration: "runtimeJar")
 
 //    compileOnly project(":compiler:daemon")
     compile project(path: ':kotlin-annotation-processing-gradle', configuration: "runtimeJar")
