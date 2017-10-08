@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.isLegacyAndroidGradleVersion
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
@@ -156,53 +155,6 @@ fun getSomething() = 10
     }
 
     @Test
-    fun testAndroidDaggerIC() {
-        val project = Project("AndroidDaggerProject", gradleVersion)
-        val options = defaultBuildOptions().copy(incremental = true)
-
-        project.build("assembleDebug", options = options) {
-            assertSuccessful()
-        }
-
-        val androidModuleKt = project.projectDir.getFileByName("AndroidModule.kt")
-        androidModuleKt.modify { it.replace("fun provideApplicationContext(): Context {",
-                                            "fun provideApplicationContext(): Context? {") }
-        // rebuilt because DaggerApplicationComponent.java was regenerated
-        val baseApplicationKt = project.projectDir.getFileByName("BaseApplication.kt")
-        // rebuilt because BuildConfig.java was regenerated (timestamp was changed)
-        val useBuildConfigJavaKt = project.projectDir.getFileByName("useBuildConfigJava.kt")
-
-        project.build(":app:assembleDebug", options = options) {
-            assertSuccessful()
-            assertCompiledKotlinSources(project.relativize(
-                    androidModuleKt,
-                    baseApplicationKt,
-                    useBuildConfigJavaKt
-            ))
-        }
-    }
-
-    @Test
-    fun testKaptKt15814() {
-        val project = Project("kaptKt15814", gradleVersion)
-        val options = defaultBuildOptions().copy(incremental = false)
-
-        project.build("assembleDebug", "test", options = options) {
-            assertSuccessful()
-        }
-    }
-
-    @Test
-    fun testAndroidIcepickProject() {
-        val project = Project("AndroidIcepickProject", gradleVersion)
-        val options = defaultBuildOptions().copy(incremental = false)
-
-        project.build("assembleDebug", options = options) {
-            assertSuccessful()
-        }
-    }
-
-    @Test
     fun testAndroidExtensions() {
         val project = Project("AndroidExtensionsProject", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = false)
@@ -222,15 +174,6 @@ fun getSomething() = 10
         }
     }
 
-    @Test
-    fun testAndroidKaptChangingDependencies() {
-        val project = Project("AndroidKaptChangingDependencies", gradleVersion)
-
-        project.build("assembleDebug") {
-            assertSuccessful()
-            assertNotContains("Changed dependencies of configuration .+ after it has been included in dependency resolution".toRegex())
-        }
-    }
 }
 
 
