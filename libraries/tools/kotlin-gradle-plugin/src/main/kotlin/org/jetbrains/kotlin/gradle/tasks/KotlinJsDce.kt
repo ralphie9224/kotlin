@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSDceArguments
 import org.jetbrains.kotlin.cli.js.dce.K2JSDce
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.compilerRunner.GradleKotlinLogger
-import org.jetbrains.kotlin.compilerRunner.createLoggingMessageCollector
 import org.jetbrains.kotlin.compilerRunner.runToolInSeparateProcess
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDceOptions
@@ -58,8 +57,7 @@ open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJs
 
         val log = GradleKotlinLogger(project.logger)
         val allArgs = argsArray + outputDirArgs + inputFiles
-        val exitCode = runToolInSeparateProcess(allArgs, K2JSDce::class.java.name, computedCompilerClasspath,
-                log, createLoggingMessageCollector(log))
+        val exitCode = runToolInSeparateProcess(allArgs, K2JSDce::class.java.name, computedCompilerClasspath, log)
         throwGradleExceptionIfError(exitCode)
     }
 }

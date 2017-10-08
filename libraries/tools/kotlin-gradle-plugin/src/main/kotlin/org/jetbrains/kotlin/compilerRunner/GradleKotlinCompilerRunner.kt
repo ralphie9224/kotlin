@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
@@ -50,34 +49,6 @@ private const val SERVICES_FQ_NAME = "org.jetbrains.kotlin.config.Services"
 
 internal class GradleCompilerRunner(private val project: Project) : KotlinCompilerRunner<GradleCompilerEnvironment>() {
     override val log = GradleKotlinLogger(project.logger)
-
-    // used only for process launching so far, but implements unused proper contract
-    private val loggingMessageCollector: MessageCollector by lazy {
-        object : MessageCollector {
-            private var hasErrors = false
-            private val messageRenderer = MessageRenderer.PLAIN_FULL_PATHS
-
-            override fun clear() {
-                hasErrors = false
-            }
-
-            override fun hasErrors(): Boolean = hasErrors
-
-            override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
-                val locMessage = messageRenderer.render(severity, message, location)
-                when (severity) {
-                    CompilerMessageSeverity.EXCEPTION -> log.error(locMessage)
-                    CompilerMessageSeverity.ERROR,
-                    CompilerMessageSeverity.STRONG_WARNING,
-                    CompilerMessageSeverity.WARNING,
-                    CompilerMessageSeverity.INFO -> log.info(locMessage)
-                    CompilerMessageSeverity.LOGGING -> log.debug(locMessage)
-                    CompilerMessageSeverity.OUTPUT -> {
-                    }
-                }
-            }
-        }
-    }
 
     fun runJvmCompiler(
             sourcesToCompile: List<File>,
@@ -284,7 +255,7 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             compilerClassName: String,
             environment: GradleCompilerEnvironment
     ): ExitCode {
-        return runToolInSeparateProcess(argsArray, compilerClassName, environment.compilerFullClasspath, log, loggingMessageCollector)
+        return runToolInSeparateProcess(argsArray, compilerClassName, environment.compilerFullClasspath, log)
     }
 
     private fun compileInProcess(
