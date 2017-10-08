@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import java.io.File
 import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
@@ -99,3 +100,11 @@ fun <T : Any> collectProperties(kClass: KClass<T>, inheritedOnly: Boolean): List
         it.visibility == KVisibility.PUBLIC && it.findAnnotation<Transient>() == null
     }
 }
+
+var K2JVMCompilerArguments.destinationAsFile: File
+    get() = File(destination)
+    set(value) { destination = value.path }
+
+var K2JVMCompilerArguments.classpathAsList: List<File>
+    get() = classpath!!.split(File.pathSeparator).map(::File)
+    set(value) { classpath = value.joinToString(separator = File.pathSeparator, transform = { it.path }) }

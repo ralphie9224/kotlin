@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.classpathAsList
+import org.jetbrains.kotlin.cli.common.arguments.destinationAsFile
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
@@ -360,11 +362,3 @@ class IncrementalJvmCompilerRunner(
         }
     }
 }
-
-var K2JVMCompilerArguments.destinationAsFile: File
-        get() = File(destination)
-        set(value) { destination = value.path }
-
-var K2JVMCompilerArguments.classpathAsList: List<File>
-    get() = classpath!!.split(File.pathSeparator).map(::File)
-    set(value) { classpath = value.joinToString(separator = File.pathSeparator, transform = { it.path }) }
